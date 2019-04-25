@@ -134,24 +134,7 @@ describe "ActiveRecord American Gladiator" do
 
       # Changeable Start
 
-      Order.joins(:items).group("items.id").order("items_count DESC").limit(2).select("items.*, count(items.id) AS items_count")
-      items_with_count = Hash.new(0)
-
-      Order.all.each do |order|
-        order.items.each do |item|
-          items_with_count[item.id] += 1
-        end
-      end
-
-      top_items_with_count = items_with_count.sort_by { |item_id, count|
-        count
-      }.reverse.first(2)
-
-      top_item_ids = top_items_with_count.first.zip(top_items_with_count.last).first
-
-      most_popular_items = top_item_ids.map do |id|
-        Item.find(id)
-      end
+      most_popular_items = Item.joins(:order_items).group("items.id").order("items_count DESC").limit(2).select("items.*, count(items.id) AS items_count")
       # Changeable Stop
 
       # Hints: http://apidock.com/rails/ActiveRecord/QueryMethods/select
